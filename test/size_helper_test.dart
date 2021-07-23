@@ -1,33 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart' show BuildContext, Size, SizedBox, Widget;
+import 'package:flutter/widgets.dart' show BuildContext, Size;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:size_helper/size_helper.dart';
 
-class MockStatefulElement extends Mock implements StatefulElement {
-  MockStatefulElement(StatefulWidget widget)
-      : state = widget.createState(),
-        super(widget) {
-    assert(() {
-      if (!state._debugTypesAreRight(widget)) {
-        throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary('StatefulWidget.createState must return a subtype of State<${widget.runtimeType}>'),
-          ErrorDescription(
-            'The createState function for ${widget.runtimeType} returned a state '
-            'of type ${state.runtimeType}, which is not a subtype of '
-            'State<${widget.runtimeType}>, violating the contract for createState.',
-          ),
-        ]);
-      }
-      return true;
-    }());
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return super.toString();
-  }
-}
+import 'size_helper_test.mocks.dart';
 
 main() {
   test('Returns mobileSmall choice', () {
@@ -84,20 +63,16 @@ main() {
   });
 }
 
+@GenerateMocks([BuildContext])
 BuildContext _createContextWithSize(double width, double height) {
-  final context = MockStatefulElement();
-  when(context.widget).thenReturn(
-    MediaQuery(
-      data: MediaQueryData(size: Size(width, height)),
-      child: MaterialApp(),
-    ),
+  final context = MockBuildContext();
+  final mediaQuery = MediaQuery(
+    data: MediaQueryData(size: Size(width, height)),
+    child: const SizedBox(),
   );
-  return StatelessElement(TestStatelessWidget());
-}
-
-class TestStatelessWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox();
-  }
+  when(context.widget).thenReturn(const SizedBox());
+  when(context.findAncestorWidgetOfExactType()).thenReturn(mediaQuery);
+  when(context.dependOnInheritedWidgetOfExactType<MediaQuery>())
+      .thenReturn(mediaQuery);
+  return context;
 }

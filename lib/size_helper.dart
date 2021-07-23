@@ -233,40 +233,40 @@ class SizeHelper {
 
   void _printCurrentScreenInfo(int current) {
     if (current < _BreakPoint.mobileNormal)
-      print(
+      return print(
           'SizeHelper: mobileSmall | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.mobileLarge)
-      print(
+      return print(
           'SizeHelper: mobileNormal | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.mobileExtraLarge)
-      print(
+      return print(
           'SizeHelper: mobileLarge | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.tabletSmall)
-      print(
+      return print(
           'SizeHelper: mobileExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.tabletNormal)
-      print(
+      return print(
           'SizeHelper: tabletSmall | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.tabletLarge)
-      print(
+      return print(
           'SizeHelper: tabletNormal | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.tabletExtraLarge)
-      print(
+      return print(
           'SizeHelper: tabletLarge | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.desktopSmall)
-      print(
+      return print(
           'SizeHelper: tabletExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.desktopNormal)
-      print(
+      return print(
           'SizeHelper: desktopSmall | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.desktopLarge)
-      print(
+      return print(
           'SizeHelper: desktopNormal | Width: ${_size.width} | Height: ${_size.height}');
     if (current < _BreakPoint.desktopExtraLarge)
-      print(
+      return print(
           'SizeHelper: desktopLarge | Width: ${_size.width} | Height: ${_size.height}');
     else
-      print(
+      return print(
           'SizeHelper: desktopExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
   }
 }

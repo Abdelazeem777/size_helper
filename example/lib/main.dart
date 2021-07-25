@@ -23,15 +23,40 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizeHelper.of(context, printScreenInfo: true).helpBuilder(
+        mobileNormal: (width, height) => Container(
+          alignment: Alignment.center,
+          color: Colors.greenAccent,
+          child: Text('mobileNormal'),
+        ),
+        mobileLarge: (width, height) => Container(
+          alignment: Alignment.center,
+          color: Colors.green,
+          child: Text('mobileLarge'),
+        ),
         mobileExtraLarge: (width, height) => Container(
           alignment: Alignment.center,
-          color: Colors.blue,
+          color: Colors.cyanAccent,
           child: Text('mobileExtraLarge'),
+        ),
+        tabletSmall: (width, height) => Container(
+          alignment: Alignment.center,
+          color: Colors.teal,
+          child: Text('tabletSmall'),
+        ),
+        tabletNormal: (width, height) => Container(
+          alignment: Alignment.center,
+          color: Colors.blue,
+          child: Text('tabletNormal'),
         ),
         tabletLarge: (width, height) => Container(
           alignment: Alignment.center,
-          color: Colors.green,
+          color: Colors.deepPurple,
           child: Text('tabletLarge'),
+        ),
+        tabletExtraLarge: (width, height) => Container(
+          alignment: Alignment.center,
+          color: Colors.pink,
+          child: Text('tabletExtraLarge'),
         ),
         desktopSmall: (width, height) => Container(
           alignment: Alignment.center,
@@ -40,7 +65,7 @@ class Home extends StatelessWidget {
         ),
         desktopNormal: (width, height) => Container(
           alignment: Alignment.center,
-          color: width > 850 ? Colors.orange : Colors.yellow,
+          color: height > 850 ? Colors.orange : Colors.yellow,
           child: Text('desktopNormal'),
         ),
       ),

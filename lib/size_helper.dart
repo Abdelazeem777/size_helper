@@ -10,7 +10,7 @@ class SizeHelper {
     this._orientation,
     this._printScreenInfo,
   );
-  int _current;
+  double _current;
   Size _size;
   Orientation _orientation;
   bool _printScreenInfo;
@@ -24,8 +24,7 @@ class SizeHelper {
     final orientation =
         width > height ? Orientation.landscape : Orientation.portrait;
 
-    final current =
-        (orientation == Orientation.portrait ? height : width).toInt();
+    final current = orientation == Orientation.portrait ? height : width;
 
     return SizeHelper._internal(current, size, orientation, printScreenInfo);
   }
@@ -56,9 +55,9 @@ class SizeHelper {
     T? desktopExtraLarge,
     T? desktopExtraLargeLandscape,
   }) {
-    if (_printScreenInfo) _printCurrentScreenInfo(_current);
-
     final isPortrait = _orientation == Orientation.portrait;
+
+    if (_printScreenInfo) _printCurrentScreenInfo(_current, _size, isPortrait);
 
     final portraitNodesList = [
       if (mobileSmall != null) Node(_BreakPoint.mobileSmall, mobileSmall),
@@ -146,9 +145,9 @@ class SizeHelper {
     T Function(double width, double height)? desktopExtraLarge,
     T Function(double width, double height)? desktopExtraLargeLandscape,
   }) {
-    if (_printScreenInfo) _printCurrentScreenInfo(_current);
-
     final isPortrait = _orientation == Orientation.portrait;
+
+    if (_printScreenInfo) _printCurrentScreenInfo(_current, _size, isPortrait);
 
     final portraitNodesList = [
       if (mobileSmall != null) Node(_BreakPoint.mobileSmall, mobileSmall),
@@ -209,7 +208,7 @@ class SizeHelper {
           'Screen size not specified or there is no options passed from the parameters [current: `$_current`, orientation: `$_orientation`]');
   }
 
-  Node<T>? _findClosestNode<T>(int currentSize, bool isPortrait,
+  Node<T>? _findClosestNode<T>(double currentSize, bool isPortrait,
       List<Node<T>> portraitNodesList, List<Node<T>> landscapeNodesList) {
     var closestNode = isPortrait
         ? _findClosestNodeFromList(portraitNodesList, currentSize)
@@ -222,10 +221,11 @@ class SizeHelper {
     return closestNode;
   }
 
-  Node<T>? _findClosestNodeFromList<T>(List<Node<T>> nodesList, int current) {
+  Node<T>? _findClosestNodeFromList<T>(
+      List<Node<T>> nodesList, double current) {
     if (nodesList.isEmpty) return null;
     var closestNode = nodesList.first;
-    int minDifference = (closestNode.breakPoint - current).abs();
+    var minDifference = (closestNode.breakPoint - current).abs();
     for (int i = 1; i < nodesList.length; i++) {
       final node = nodesList[i];
       final difference = (node.breakPoint - current).abs();
@@ -237,64 +237,93 @@ class SizeHelper {
     return closestNode;
   }
 
-  void _printCurrentScreenInfo(int current) {
-    if (current < _BreakPoint.mobileNormal)
-      return print(
-          'SizeHelper: mobileSmall | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.mobileLarge)
-      return print(
-          'SizeHelper: mobileNormal | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.mobileExtraLarge)
-      return print(
-          'SizeHelper: mobileLarge | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.tabletSmall)
-      return print(
-          'SizeHelper: mobileExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.tabletNormal)
-      return print(
-          'SizeHelper: tabletSmall | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.tabletLarge)
-      return print(
-          'SizeHelper: tabletNormal | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.tabletExtraLarge)
-      return print(
-          'SizeHelper: tabletLarge | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.desktopSmall)
-      return print(
-          'SizeHelper: tabletExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.desktopNormal)
-      return print(
-          'SizeHelper: desktopSmall | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.desktopLarge)
-      return print(
-          'SizeHelper: desktopNormal | Width: ${_size.width} | Height: ${_size.height}');
-    if (current < _BreakPoint.desktopExtraLarge)
-      return print(
-          'SizeHelper: desktopLarge | Width: ${_size.width} | Height: ${_size.height}');
+  void _printCurrentScreenInfo(double current, Size size, bool isPortrait) {
+    final orientationText = isPortrait ? 'Portrait' : 'Landscape';
+    final f = _differenceBetweenCurrentAndBreakPoint;
+    final screenInfoNodes = [
+      Node(
+        _BreakPoint.mobileSmall,
+        'SizeHelper: ${f(current, _BreakPoint.mobileSmall)} mobileSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.mobileNormal,
+        'SizeHelper: ${f(current, _BreakPoint.mobileNormal)} mobileNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.mobileLarge,
+        'SizeHelper: ${f(current, _BreakPoint.mobileLarge)} mobileLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.mobileExtraLarge,
+        'SizeHelper: ${f(current, _BreakPoint.mobileExtraLarge)} mobileExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.tabletSmall,
+        'SizeHelper: ${f(current, _BreakPoint.tabletSmall)} tabletSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.tabletNormal,
+        'SizeHelper: ${f(current, _BreakPoint.tabletNormal)} tabletNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.tabletLarge,
+        'SizeHelper: ${f(current, _BreakPoint.tabletLarge)} tabletLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.tabletExtraLarge,
+        'SizeHelper: ${f(current, _BreakPoint.tabletExtraLarge)} tabletExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.desktopSmall,
+        'SizeHelper: ${f(current, _BreakPoint.desktopSmall)} desktopSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.desktopNormal,
+        'SizeHelper: ${f(current, _BreakPoint.desktopNormal)} desktopNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.desktopLarge,
+        'SizeHelper: ${f(current, _BreakPoint.desktopLarge)} desktopLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+      Node(
+        _BreakPoint.desktopExtraLarge,
+        'SizeHelper: ${f(current, _BreakPoint.desktopExtraLarge)} desktopExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      ),
+    ];
+
+    final closestNode = _findClosestNodeFromList(screenInfoNodes, current);
+    print(closestNode!.value);
+  }
+
+  String _differenceBetweenCurrentAndBreakPoint(
+      double current, double breakPoint) {
+    if (current > breakPoint)
+      return '+';
+    else if (current == breakPoint)
+      return '=';
     else
-      return print(
-          'SizeHelper: desktopExtraLarge | Width: ${_size.width} | Height: ${_size.height}');
+      return '-';
   }
 }
 
 class _BreakPoint {
-  static const mobileSmall = 320;
-  static const mobileNormal = 375;
-  static const mobileLarge = 414;
-  static const mobileExtraLarge = 480;
-  static const tabletSmall = 600;
-  static const tabletNormal = 768;
-  static const tabletLarge = 850;
-  static const tabletExtraLarge = 900;
-  static const desktopSmall = 950;
-  static const desktopNormal = 1920;
-  static const desktopLarge = 3840;
-  static const desktopExtraLarge = 4096;
+  static const mobileSmall = 320.0;
+  static const mobileNormal = 375.0;
+  static const mobileLarge = 414.0;
+  static const mobileExtraLarge = 480.0;
+  static const tabletSmall = 600.0;
+  static const tabletNormal = 768.0;
+  static const tabletLarge = 840.0;
+  static const tabletExtraLarge = 1080.0;
+  static const desktopSmall = 1280.0;
+  static const desktopNormal = 1775.0;
+  static const desktopLarge = 3540.0;
+  static const desktopExtraLarge = 4096.0;
 }
 
 class Node<T> {
-  final int breakPoint;
+  final double breakPoint;
   final T value;
 
-  Node(this.breakPoint, this.value);
+  const Node(this.breakPoint, this.value);
 }

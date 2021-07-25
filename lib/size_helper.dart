@@ -4,12 +4,18 @@ import 'package:flutter/widgets.dart'
     show Size, Orientation, BuildContext, MediaQuery;
 
 class SizeHelper {
-  SizeHelper._internal(this._current, this._size, this._orientation);
+  SizeHelper._internal(
+    this._current,
+    this._size,
+    this._orientation,
+    this._printScreenInfo,
+  );
   int _current;
   Size _size;
   Orientation _orientation;
+  bool _printScreenInfo;
 
-  static SizeHelper of(BuildContext context) {
+  static SizeHelper of(BuildContext context, {bool printScreenInfo = false}) {
     final size = MediaQuery.of(context).size;
 
     final width = size.width;
@@ -21,7 +27,7 @@ class SizeHelper {
     final current =
         (orientation == Orientation.portrait ? height : width).toInt();
 
-    return SizeHelper._internal(current, size, orientation);
+    return SizeHelper._internal(current, size, orientation, printScreenInfo);
   }
 
   T help<T>({
@@ -50,7 +56,7 @@ class SizeHelper {
     T? desktopExtraLarge,
     T? desktopExtraLargeLandscape,
   }) {
-    _printCurrentScreenInfo(_current);
+    if (_printScreenInfo) _printCurrentScreenInfo(_current);
 
     final isPortrait = _orientation == Orientation.portrait;
 
@@ -140,7 +146,7 @@ class SizeHelper {
     T Function(double width, double height)? desktopExtraLarge,
     T Function(double width, double height)? desktopExtraLargeLandscape,
   }) {
-    _printCurrentScreenInfo(_current);
+    if (_printScreenInfo) _printCurrentScreenInfo(_current);
 
     final isPortrait = _orientation == Orientation.portrait;
 

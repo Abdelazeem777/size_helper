@@ -11,7 +11,7 @@ import 'size_helper_test.mocks.dart';
 main() {
   test('Returns mobileSmall choice', () {
     final context = _createContextWithSize(150.0, 300.0);
-    final result = SizeHelper.of(context).help(
+    final result = SizeHelper.of(context, printScreenInfo: true).help(
       mobileSmall: 'right',
       mobileNormal: 'wrong',
       tabletExtraLarge: 'wrong',
@@ -30,7 +30,7 @@ main() {
   });
   test('Returns mobileSmall choice  (landscape)', () {
     final context = _createContextWithSize(300.0, 150.0);
-    final result = SizeHelper.of(context).help(
+    final result = SizeHelper.of(context, printScreenInfo: true).help(
       mobileSmall: 'wrong',
       mobileSmallLandscape: 'right',
       mobileNormal: 'wrong',
@@ -53,7 +53,7 @@ main() {
   });
   test('Returns tableExtraLarge if desktopSmall not exist choice', () {
     final context = _createContextWithSize(150.0, 1900.0);
-    final result = SizeHelper.of(context).help(
+    final result = SizeHelper.of(context, printScreenInfo: true).help(
       mobileSmall: 'wrong',
       mobileNormal: 'wrong',
       tabletExtraLarge: 'right',

@@ -79,29 +79,29 @@ class SizeHelper {
     ];
 
     final landscapeNodesList = [
-      if (mobileSmall != null)
+      if (mobileSmallLandscape != null)
         Node(_BreakPoint.mobileSmall, mobileSmallLandscape),
-      if (mobileNormal != null)
+      if (mobileNormalLandscape != null)
         Node(_BreakPoint.mobileNormal, mobileNormalLandscape),
-      if (mobileLarge != null)
+      if (mobileLargeLandscape != null)
         Node(_BreakPoint.mobileLarge, mobileLargeLandscape),
-      if (mobileExtraLarge != null)
+      if (mobileExtraLargeLandscape != null)
         Node(_BreakPoint.mobileExtraLarge, mobileExtraLargeLandscape),
-      if (tabletSmall != null)
+      if (tabletSmallLandscape != null)
         Node(_BreakPoint.tabletSmall, tabletSmallLandscape),
-      if (tabletNormal != null)
+      if (tabletNormalLandscape != null)
         Node(_BreakPoint.tabletNormal, tabletNormalLandscape),
-      if (tabletLarge != null)
+      if (tabletLargeLandscape != null)
         Node(_BreakPoint.tabletLarge, tabletLargeLandscape),
-      if (tabletExtraLarge != null)
+      if (tabletExtraLargeLandscape != null)
         Node(_BreakPoint.tabletExtraLarge, tabletExtraLargeLandscape),
-      if (desktopSmall != null)
+      if (desktopSmallLandscape != null)
         Node(_BreakPoint.desktopSmall, desktopSmallLandscape),
-      if (desktopNormal != null)
+      if (desktopNormalLandscape != null)
         Node(_BreakPoint.desktopNormal, desktopNormalLandscape),
-      if (desktopLarge != null)
+      if (desktopLargeLandscape != null)
         Node(_BreakPoint.desktopLarge, desktopLargeLandscape),
-      if (desktopExtraLarge != null)
+      if (desktopExtraLargeLandscape != null)
         Node(_BreakPoint.desktopExtraLarge, desktopExtraLargeLandscape),
     ];
 
@@ -169,29 +169,29 @@ class SizeHelper {
     ];
 
     final landscapeNodesList = [
-      if (mobileSmall != null)
+      if (mobileSmallLandscape != null)
         Node(_BreakPoint.mobileSmall, mobileSmallLandscape),
-      if (mobileNormal != null)
+      if (mobileNormalLandscape != null)
         Node(_BreakPoint.mobileNormal, mobileNormalLandscape),
-      if (mobileLarge != null)
+      if (mobileLargeLandscape != null)
         Node(_BreakPoint.mobileLarge, mobileLargeLandscape),
-      if (mobileExtraLarge != null)
+      if (mobileExtraLargeLandscape != null)
         Node(_BreakPoint.mobileExtraLarge, mobileExtraLargeLandscape),
-      if (tabletSmall != null)
+      if (tabletSmallLandscape != null)
         Node(_BreakPoint.tabletSmall, tabletSmallLandscape),
-      if (tabletNormal != null)
+      if (tabletNormalLandscape != null)
         Node(_BreakPoint.tabletNormal, tabletNormalLandscape),
-      if (tabletLarge != null)
+      if (tabletLargeLandscape != null)
         Node(_BreakPoint.tabletLarge, tabletLargeLandscape),
-      if (tabletExtraLarge != null)
+      if (tabletExtraLargeLandscape != null)
         Node(_BreakPoint.tabletExtraLarge, tabletExtraLargeLandscape),
-      if (desktopSmall != null)
+      if (desktopSmallLandscape != null)
         Node(_BreakPoint.desktopSmall, desktopSmallLandscape),
-      if (desktopNormal != null)
+      if (desktopNormalLandscape != null)
         Node(_BreakPoint.desktopNormal, desktopNormalLandscape),
-      if (desktopLarge != null)
+      if (desktopLargeLandscape != null)
         Node(_BreakPoint.desktopLarge, desktopLargeLandscape),
-      if (desktopExtraLarge != null)
+      if (desktopExtraLargeLandscape != null)
         Node(_BreakPoint.desktopExtraLarge, desktopExtraLargeLandscape),
     ];
 
@@ -203,7 +203,7 @@ class SizeHelper {
     );
 
     if (closestNode != null)
-      return closestNode.value!(_size.width, _size.height);
+      return closestNode.value(_size.width, _size.height);
     else
       throw Exception(
           'Screen size not specified or there is no options passed from the parameters [current: `$_current`, orientation: `$_orientation`]');

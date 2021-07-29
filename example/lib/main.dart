@@ -21,6 +21,10 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _buildExampleOne(context);
+  }
+
+  Widget _buildExampleOne(BuildContext context) {
     return Scaffold(
       body: SizeHelper.of(context, printScreenInfo: true).helpBuilder(
         mobileNormal: (width, height) => Container(

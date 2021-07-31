@@ -4,6 +4,9 @@ import 'package:flutter/widgets.dart'
 
 import 'node.dart';
 
+/// Takes  `T Function(double width, double height)` as a parameter
+typedef HelpBuilderCallback<T> = T Function(double width, double height);
+
 class SizeHelper {
   SizeHelper._internal(
     this._current,
@@ -121,30 +124,30 @@ class SizeHelper {
 
   /// Takes  `T Function(double width, double height)` as a parameter
   T helpBuilder<T>({
-    T Function(double width, double height)? mobileSmall,
-    T Function(double width, double height)? mobileSmallLandscape,
-    T Function(double width, double height)? mobileNormal,
-    T Function(double width, double height)? mobileNormalLandscape,
-    T Function(double width, double height)? mobileLarge,
-    T Function(double width, double height)? mobileLargeLandscape,
-    T Function(double width, double height)? mobileExtraLarge,
-    T Function(double width, double height)? mobileExtraLargeLandscape,
-    T Function(double width, double height)? tabletSmall,
-    T Function(double width, double height)? tabletSmallLandscape,
-    T Function(double width, double height)? tabletNormal,
-    T Function(double width, double height)? tabletNormalLandscape,
-    T Function(double width, double height)? tabletLarge,
-    T Function(double width, double height)? tabletLargeLandscape,
-    T Function(double width, double height)? tabletExtraLarge,
-    T Function(double width, double height)? tabletExtraLargeLandscape,
-    T Function(double width, double height)? desktopSmall,
-    T Function(double width, double height)? desktopSmallLandscape,
-    T Function(double width, double height)? desktopNormal,
-    T Function(double width, double height)? desktopNormalLandscape,
-    T Function(double width, double height)? desktopLarge,
-    T Function(double width, double height)? desktopLargeLandscape,
-    T Function(double width, double height)? desktopExtraLarge,
-    T Function(double width, double height)? desktopExtraLargeLandscape,
+    HelpBuilderCallback<T>? mobileSmall,
+    HelpBuilderCallback<T>? mobileSmallLandscape,
+    HelpBuilderCallback<T>? mobileNormal,
+    HelpBuilderCallback<T>? mobileNormalLandscape,
+    HelpBuilderCallback<T>? mobileLarge,
+    HelpBuilderCallback<T>? mobileLargeLandscape,
+    HelpBuilderCallback<T>? mobileExtraLarge,
+    HelpBuilderCallback<T>? mobileExtraLargeLandscape,
+    HelpBuilderCallback<T>? tabletSmall,
+    HelpBuilderCallback<T>? tabletSmallLandscape,
+    HelpBuilderCallback<T>? tabletNormal,
+    HelpBuilderCallback<T>? tabletNormalLandscape,
+    HelpBuilderCallback<T>? tabletLarge,
+    HelpBuilderCallback<T>? tabletLargeLandscape,
+    HelpBuilderCallback<T>? tabletExtraLarge,
+    HelpBuilderCallback<T>? tabletExtraLargeLandscape,
+    HelpBuilderCallback<T>? desktopSmall,
+    HelpBuilderCallback<T>? desktopSmallLandscape,
+    HelpBuilderCallback<T>? desktopNormal,
+    HelpBuilderCallback<T>? desktopNormalLandscape,
+    HelpBuilderCallback<T>? desktopLarge,
+    HelpBuilderCallback<T>? desktopLargeLandscape,
+    HelpBuilderCallback<T>? desktopExtraLarge,
+    HelpBuilderCallback<T>? desktopExtraLargeLandscape,
   }) {
     final isPortrait = _orientation == Orientation.portrait;
 

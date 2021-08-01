@@ -1,5 +1,5 @@
 name: size_helper
-description: A new Flutter package project.
+description: SizeHelper is a Flutter package for developing a responsive UI, with more control on UI components based on the current screen-size.
 version: 0.0.1
 homepage: https://github.com/Abdelazeem777/size_helper.git
 

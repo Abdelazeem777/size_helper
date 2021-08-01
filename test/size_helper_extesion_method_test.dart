@@ -72,9 +72,9 @@ main() {
       final context = _createContextWithSize(150.0, 300.0);
       final result = context.sizeHelperBuilder(
         printScreenInfo: true,
-        mobileSmall: (_, __) => 'right',
-        mobileNormal: (_, __) => 'wrong',
-        tabletExtraLarge: (_, __) => 'wrong',
+        mobileSmall: (_, __, ___) => 'right',
+        mobileNormal: (_, __, ___) => 'wrong',
+        tabletExtraLarge: (_, __, ___) => 'wrong',
       );
 
       expect(result, 'right');
@@ -82,8 +82,8 @@ main() {
     test('Returns mobileNormal choice if mobileSmall not specified', () {
       final context = _createContextWithSize(150.0, 300.0);
       final result = context.sizeHelperBuilder(
-        mobileNormal: (_, __) => 'right',
-        tabletExtraLarge: (_, __) => 'wrong',
+        mobileNormal: (_, __, ___) => 'right',
+        tabletExtraLarge: (_, __, ___) => 'wrong',
       );
 
       expect(result, 'right');
@@ -92,10 +92,10 @@ main() {
       final context = _createContextWithSize(300.0, 150.0);
       final result = context.sizeHelperBuilder(
         printScreenInfo: true,
-        mobileSmall: (_, __) => 'wrong',
-        mobileSmallLandscape: (_, __) => 'right',
-        mobileNormal: (_, __) => 'wrong',
-        tabletExtraLarge: (_, __) => 'wrong',
+        mobileSmall: (_, __, ___) => 'wrong',
+        mobileSmallLandscape: (_, __, ___) => 'right',
+        mobileNormal: (_, __, ___) => 'wrong',
+        tabletExtraLarge: (_, __, ___) => 'wrong',
       );
 
       expect(result, 'right');
@@ -103,11 +103,11 @@ main() {
     test('Returns desktopSmall choice', () {
       final context = _createContextWithSize(150.0, 1900.0);
       final result = context.sizeHelperBuilder(
-        mobileSmall: (_, __) => 'wrong',
-        mobileNormal: (_, __) => 'wrong',
-        tabletExtraLarge: (_, __) => 'wrong',
-        desktopSmall: (_, __) => 'right',
-        desktopLarge: (_, __) => 'wrong',
+        mobileSmall: (_, __, ___) => 'wrong',
+        mobileNormal: (_, __, ___) => 'wrong',
+        tabletExtraLarge: (_, __, ___) => 'wrong',
+        desktopSmall: (_, __, ___) => 'right',
+        desktopLarge: (_, __, ___) => 'wrong',
       );
 
       expect(result, 'right');
@@ -116,9 +116,9 @@ main() {
       final context = _createContextWithSize(150.0, 1900.0);
       final result = context.sizeHelperBuilder(
         printScreenInfo: true,
-        mobileSmall: (_, __) => 'wrong',
-        mobileNormal: (_, __) => 'wrong',
-        tabletExtraLarge: (_, __) => 'right',
+        mobileSmall: (_, __, ___) => 'wrong',
+        mobileNormal: (_, __, ___) => 'wrong',
+        tabletExtraLarge: (_, __, ___) => 'right',
       );
 
       expect(result, 'right');
@@ -129,9 +129,9 @@ main() {
       final context = _createContextWithSize(1044.0, 763.2000122070312);
       final result = context.sizeHelperBuilder(
         printScreenInfo: true,
-        mobileSmall: (_, __) => 'wrong',
-        mobileNormal: (_, __) => 'wrong',
-        tabletExtraLarge: (_, __) => 'right',
+        mobileSmall: (_, __, ___) => 'wrong',
+        mobileNormal: (_, __, ___) => 'wrong',
+        tabletExtraLarge: (_, __, ___) => 'right',
       );
 
       expect(result, 'right');

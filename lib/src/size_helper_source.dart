@@ -4,8 +4,9 @@ import 'package:flutter/widgets.dart'
 
 import 'node.dart';
 
-/// Takes  `T Function(double width, double height)` as a parameter
-typedef HelpBuilderCallback<T> = T Function(double width, double height);
+/// Takes  `T Function(double width, double height, Orientation orientation)` as a parameter
+typedef HelpBuilderCallback<T> = T Function(
+    double width, double height, Orientation orientation);
 
 class SizeHelper {
   SizeHelper._internal(
@@ -206,7 +207,7 @@ class SizeHelper {
     );
 
     if (closestNode != null)
-      return closestNode.value(_size.width, _size.height);
+      return closestNode.value(_size.width, _size.height, _orientation);
     else
       throw Exception(
           'Screen size not specified or there is no options passed from the parameters [current: `$_current`, orientation: `$_orientation`]');

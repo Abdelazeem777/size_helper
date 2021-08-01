@@ -28,47 +28,47 @@ class Home extends StatelessWidget {
   Widget _buildExample1(BuildContext context) {
     return Scaffold(
       body: SizeHelper.of(context, printScreenInfo: true).helpBuilder(
-        mobileNormal: (width, height) => Container(
+        mobileNormal: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.greenAccent,
           child: Text('mobileNormal'),
         ),
-        mobileLarge: (width, height) => Container(
+        mobileLarge: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.green,
           child: Text('mobileLarge'),
         ),
-        mobileExtraLarge: (width, height) => Container(
+        mobileExtraLarge: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.cyanAccent,
           child: Text('mobileExtraLarge'),
         ),
-        tabletSmall: (width, height) => Container(
+        tabletSmall: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.teal,
           child: Text('tabletSmall'),
         ),
-        tabletNormal: (width, height) => Container(
+        tabletNormal: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.blue,
           child: Text('tabletNormal'),
         ),
-        tabletLarge: (width, height) => Container(
+        tabletLarge: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.deepPurple,
           child: Text('tabletLarge'),
         ),
-        tabletExtraLarge: (width, height) => Container(
+        tabletExtraLarge: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.pink,
           child: Text('tabletExtraLarge'),
         ),
-        desktopSmall: (width, height) => Container(
+        desktopSmall: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: Colors.red,
           child: Text('desktopSmall'),
         ),
-        desktopNormal: (width, height) => Container(
+        desktopNormal: (width, height, orientation) => Container(
           alignment: Alignment.center,
           color: height > 850 ? Colors.orange : Colors.yellow,
           child: Text('desktopNormal'),
@@ -82,16 +82,16 @@ class Home extends StatelessWidget {
     final cardsList = dataList.map((e) => CardWidget(text: e)).toList();
     return Scaffold(
       body: context.sizeHelperBuilder(
-        mobileExtraLarge: (_, __) => SingleChildScrollView(
+        mobileExtraLarge: (_, __, ___) => SingleChildScrollView(
             child: Column(
           children: cardsList,
         )),
-        tabletLarge: (_, __) => SingleChildScrollView(
+        tabletLarge: (_, __, ___) => SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: cardsList,
             )),
-        desktopSmall: (_, __) => Wrap(
+        desktopSmall: (_, __, ___) => Wrap(
           children: cardsList,
         ),
       ),

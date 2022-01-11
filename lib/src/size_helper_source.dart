@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'breakpoints.dart';
 import 'package:flutter/widgets.dart'
     show Size, Orientation, BuildContext, MediaQuery;
@@ -297,7 +299,7 @@ class SizeHelper {
     ];
 
     final closestNode = _findClosestNodeFromList(screenInfoNodes, current);
-    print(closestNode!.value);
+    log(closestNode!.value);
   }
 
   String _differenceBetweenCurrentAndBreakPoint(

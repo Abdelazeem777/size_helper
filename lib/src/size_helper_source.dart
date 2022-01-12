@@ -6,9 +6,12 @@ import 'package:flutter/widgets.dart'
 
 import 'node.dart';
 
-/// Takes  `T Function(double width, double height, Orientation orientation)` as a parameter
+/// Takes `T Function(double width, double height, Orientation orientation)` as a parameter
 typedef HelpBuilderCallback<T> = T Function(
-    double width, double height, Orientation orientation);
+  double width,
+  double height,
+  Orientation orientation,
+);
 
 class SizeHelper {
   SizeHelper._internal(
@@ -24,7 +27,7 @@ class SizeHelper {
 
   static double? _oldLength;
   static Orientation? _oldOrientation;
-  static double? _cachedBreakPoint;
+  static List<BreakPoint>? _cachedBreakPointsList;
 
   static SizeHelper of(BuildContext context, {bool printScreenInfo = false}) {
     final size = MediaQuery.of(context).size;
@@ -73,9 +76,22 @@ class SizeHelper {
     T? desktopExtraLargeLandscape,
   }) {
     final isPortrait = _currentOrientation == Orientation.portrait;
+    final closestBreakPoints =
+        _oldLength == _currentLength && _oldOrientation == _currentOrientation
+            ? _cachedBreakPointsList!
+            : _getSortedBreakPointsByClosestTo(_currentLength);
+
+    _oldLength = _currentLength;
+    _oldOrientation = _currentOrientation;
+    _cachedBreakPointsList = closestBreakPoints;
 
     if (_printScreenInfo)
-      _printCurrentScreenInfo(_currentLength, _size, isPortrait);
+      _printCurrentScreenInfo(
+        currentLength: _currentLength,
+        closestBreakPoint: closestBreakPoints.first,
+        size: _size,
+        isPortrait: isPortrait,
+      );
 
     final portraitMap = {
       if (mobileSmall != null) BreakPoint.mobileSmall: mobileSmall,
@@ -122,24 +138,21 @@ class SizeHelper {
         BreakPoint.desktopExtraLarge: desktopExtraLargeLandscape,
     };
 
-    final closestMapEntry = _findClosestMapEntry(
-      _currentLength,
+    final closestItem = _findClosest(
+      closestBreakPoints,
       isPortrait,
       portraitMap,
       landscapeMap,
     );
 
-    if (closestMapEntry != null) {
-      _oldLength = _currentLength;
-      _oldOrientation = _currentOrientation;
-      _cachedBreakPoint = closestMapEntry.key;
-      return closestMapEntry.value!;
-    } else
+    if (closestItem != null)
+      return closestItem;
+    else
       throw Exception(
           'Screen size not specified or there is no options passed from the parameters [currentLength: `$_currentLength`, orientation: `$_currentOrientation`]');
   }
 
-  /// Takes  `T Function(double width, double height)` as a parameter
+  /// Takes `T Function(double width, double height)` as a parameter
   T helpBuilder<T>({
     HelpBuilderCallback<T>? mobileSmall,
     HelpBuilderCallback<T>? mobileSmallLandscape,
@@ -168,8 +181,22 @@ class SizeHelper {
   }) {
     final isPortrait = _currentOrientation == Orientation.portrait;
 
+    final closestBreakPoints =
+        _oldLength == _currentLength && _oldOrientation == _currentOrientation
+            ? _cachedBreakPointsList!
+            : _getSortedBreakPointsByClosestTo(_currentLength);
+
+    _oldLength = _currentLength;
+    _oldOrientation = _currentOrientation;
+    _cachedBreakPointsList = closestBreakPoints;
+
     if (_printScreenInfo)
-      _printCurrentScreenInfo(_currentLength, _size, isPortrait);
+      _printCurrentScreenInfo(
+        currentLength: _currentLength,
+        closestBreakPoint: closestBreakPoints.first,
+        size: _size,
+        isPortrait: isPortrait,
+      );
 
     final portraitMap = {
       if (mobileSmall != null) BreakPoint.mobileSmall: mobileSmall,
@@ -216,111 +243,80 @@ class SizeHelper {
         BreakPoint.desktopExtraLarge: desktopExtraLargeLandscape,
     };
 
-    final closestMapEntry = _findClosestMapEntry(
-      _currentLength,
+    final closest = _findClosest(
+      closestBreakPoints,
       isPortrait,
       portraitMap,
       landscapeMap,
     );
 
-    if (closestMapEntry != null) {
-      _oldLength = _currentLength;
-      _oldOrientation = _currentOrientation;
-      _cachedBreakPoint = closestMapEntry.key;
-      return closestMapEntry.value(
-          _size.width, _size.height, _currentOrientation);
+    if (closest != null) {
+      return closest(
+        _size.width,
+        _size.height,
+        _currentOrientation,
+      );
     } else
       throw Exception(
           'Screen size not specified or there is no options passed from the parameters [currentLength: `$_currentLength`, orientation: `$_currentOrientation`]');
   }
 
-  MapEntry<double, T>? _findClosestMapEntry<T>(
-    double currentLengthSize,
+  T? _findClosest<T>(
+    List<BreakPoint> closestBreakPoints,
     bool isPortrait,
-    Map<double, T> portraitMap,
-    Map<double, T> landscapeMap,
+    Map<BreakPoint, T> portraitMap,
+    Map<BreakPoint, T> landscapeMap,
   ) {
-    // FIXME: the problem here is that the _cachedBreakPoint may not be the closest one,
-    // it's just the closest for the last search,
-    // so we need to find a better way to cache it.
-    if (_oldLength == _currentLength &&
-        _oldOrientation == _currentOrientation) {
-      final value = isPortrait
-          ? portraitMap[_cachedBreakPoint]
-          : landscapeMap[_cachedBreakPoint];
-      if (value != null) return MapEntry(_cachedBreakPoint!, value);
-    }
+    var closest = isPortrait
+        ? _findClosestFromMap(portraitMap, closestBreakPoints)
+        : _findClosestFromMap(landscapeMap, closestBreakPoints);
 
-    var closestMapEntry = isPortrait
-        ? _findClosestMapEntryFromMap(portraitMap, currentLengthSize)
-        : _findClosestMapEntryFromMap(landscapeMap, currentLengthSize);
+    if (closest == null)
+      closest = !isPortrait
+          ? _findClosestFromMap(portraitMap, closestBreakPoints)
+          : _findClosestFromMap(landscapeMap, closestBreakPoints);
 
-    if (closestMapEntry == null)
-      closestMapEntry = !isPortrait
-          ? _findClosestMapEntryFromMap(portraitMap, currentLengthSize)
-          : _findClosestMapEntryFromMap(landscapeMap, currentLengthSize);
-
-    return closestMapEntry;
+    return closest;
   }
 
-  MapEntry<double, T>? _findClosestMapEntryFromMap<T>(
-    Map<double, T> map,
-    double currentLength,
+  T? _findClosestFromMap<T>(
+    Map<BreakPoint, T> map,
+    List<BreakPoint> closestBreakPoints,
   ) {
     if (map.isEmpty) return null;
-    var closestMapEntry = map.entries.first;
-    var minDifference = (closestMapEntry.key - currentLength).abs();
-    map.forEach((key, value) {
-      final difference = (key - currentLength).abs();
-      if (difference < minDifference) {
-        minDifference = difference;
-        closestMapEntry = MapEntry(key, value);
-      }
-    });
-    return closestMapEntry;
+    for (var breakPoint in closestBreakPoints) {
+      final closest = map[breakPoint];
+      if (closest != null) return closest;
+    }
   }
 
-  void _printCurrentScreenInfo(
-      double currentLength, Size size, bool isPortrait) {
-    final orientationText = isPortrait ? 'Portrait' : 'Landscape';
-    final f = _differenceBetweenCurrentAndBreakPoint;
-    final screenInfoMapEntrys = {
-      BreakPoint.mobileSmall:
-          'SizeHelper: ${f(currentLength, BreakPoint.mobileSmall)} mobileSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.mobileNormal:
-          'SizeHelper: ${f(currentLength, BreakPoint.mobileNormal)} mobileNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.mobileLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.mobileLarge)} mobileLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.mobileExtraLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.mobileExtraLarge)} mobileExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.tabletSmall:
-          'SizeHelper: ${f(currentLength, BreakPoint.tabletSmall)} tabletSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.tabletNormal:
-          'SizeHelper: ${f(currentLength, BreakPoint.tabletNormal)} tabletNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.tabletLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.tabletLarge)} tabletLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.tabletExtraLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.tabletExtraLarge)} tabletExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.desktopSmall:
-          'SizeHelper: ${f(currentLength, BreakPoint.desktopSmall)} desktopSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.desktopNormal:
-          'SizeHelper: ${f(currentLength, BreakPoint.desktopNormal)} desktopNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.desktopLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.desktopLarge)} desktopLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      BreakPoint.desktopExtraLarge:
-          'SizeHelper: ${f(currentLength, BreakPoint.desktopExtraLarge)} desktopExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-    };
+  List<BreakPoint> _getSortedBreakPointsByClosestTo(double currentLength) {
+    final sortedList = BreakPoint.values;
+    sortedList.sort(
+      (a, b) => (a.value - currentLength)
+          .abs()
+          .compareTo((b.value - currentLength).abs()),
+    );
+    return sortedList;
+  }
 
-    final closestMapEntry =
-        _findClosestMapEntryFromMap(screenInfoMapEntrys, currentLength);
-    log(closestMapEntry!.value);
+  void _printCurrentScreenInfo({
+    required double currentLength,
+    required BreakPoint closestBreakPoint,
+    required Size size,
+    required bool isPortrait,
+  }) {
+    final orientationText = isPortrait ? 'Portrait' : 'Landscape';
+    final difference = _differenceBetweenCurrentAndBreakPoint(
+        currentLength, closestBreakPoint.value);
+    log('SizeHelper: $difference ${closestBreakPoint.name} | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText');
   }
 
   String _differenceBetweenCurrentAndBreakPoint(
-      double currentLength, double breakPoint) {
-    if (currentLength > breakPoint)
+      double currentLength, double breakPointValue) {
+    if (currentLength > breakPointValue)
       return '+';
-    else if (currentLength == breakPoint)
+    else if (currentLength == breakPointValue)
       return '=';
     else
       return '-';

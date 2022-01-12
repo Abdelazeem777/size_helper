@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart' show BuildContext, Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -154,5 +153,7 @@ BuildContext _createContextWithSize(double width, double height) {
   when(context.findAncestorWidgetOfExactType()).thenReturn(mediaQuery);
   when(context.dependOnInheritedWidgetOfExactType<MediaQuery>())
       .thenReturn(mediaQuery);
+  when(context.getElementForInheritedWidgetOfExactType())
+      .thenReturn(InheritedElement(mediaQuery));
   return context;
 }

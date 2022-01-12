@@ -150,5 +150,8 @@ BuildContext _createContextWithSize(double width, double height) {
   when(context.findAncestorWidgetOfExactType()).thenReturn(mediaQuery);
   when(context.dependOnInheritedWidgetOfExactType<MediaQuery>())
       .thenReturn(mediaQuery);
+  when(context.getElementForInheritedWidgetOfExactType())
+      .thenReturn(InheritedElement(mediaQuery));
+
   return context;
 }

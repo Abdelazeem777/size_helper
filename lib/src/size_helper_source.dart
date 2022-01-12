@@ -12,15 +12,19 @@ typedef HelpBuilderCallback<T> = T Function(
 
 class SizeHelper {
   SizeHelper._internal(
-    this._current,
+    this._currentLength,
     this._size,
-    this._orientation,
+    this._currentOrientation,
     this._printScreenInfo,
   );
-  double _current;
+  double _currentLength;
   Size _size;
-  Orientation _orientation;
+  Orientation _currentOrientation;
   bool _printScreenInfo;
+
+  static double? _oldLength;
+  static Orientation? _oldOrientation;
+  static double? _cachedBreakPoint;
 
   static SizeHelper of(BuildContext context, {bool printScreenInfo = false}) {
     final size = MediaQuery.of(context).size;
@@ -28,12 +32,18 @@ class SizeHelper {
     final width = size.width;
     final height = size.height;
 
-    final orientation =
+    final currentOrientation =
         width > height ? Orientation.landscape : Orientation.portrait;
 
-    final current = orientation == Orientation.portrait ? height : width;
+    final currentLength =
+        currentOrientation == Orientation.portrait ? height : width;
 
-    return SizeHelper._internal(current, size, orientation, printScreenInfo);
+    return SizeHelper._internal(
+      currentLength,
+      size,
+      currentOrientation,
+      printScreenInfo,
+    );
   }
 
   T help<T>({
@@ -62,67 +72,71 @@ class SizeHelper {
     T? desktopExtraLarge,
     T? desktopExtraLargeLandscape,
   }) {
-    final isPortrait = _orientation == Orientation.portrait;
+    final isPortrait = _currentOrientation == Orientation.portrait;
 
-    if (_printScreenInfo) _printCurrentScreenInfo(_current, _size, isPortrait);
+    if (_printScreenInfo)
+      _printCurrentScreenInfo(_currentLength, _size, isPortrait);
 
-    final portraitNodesList = [
-      if (mobileSmall != null) Node(BreakPoint.mobileSmall, mobileSmall),
-      if (mobileNormal != null) Node(BreakPoint.mobileNormal, mobileNormal),
-      if (mobileLarge != null) Node(BreakPoint.mobileLarge, mobileLarge),
+    final portraitMap = {
+      if (mobileSmall != null) BreakPoint.mobileSmall: mobileSmall,
+      if (mobileNormal != null) BreakPoint.mobileNormal: mobileNormal,
+      if (mobileLarge != null) BreakPoint.mobileLarge: mobileLarge,
       if (mobileExtraLarge != null)
-        Node(BreakPoint.mobileExtraLarge, mobileExtraLarge),
-      if (tabletSmall != null) Node(BreakPoint.tabletSmall, tabletSmall),
-      if (tabletNormal != null) Node(BreakPoint.tabletNormal, tabletNormal),
-      if (tabletLarge != null) Node(BreakPoint.tabletLarge, tabletLarge),
+        BreakPoint.mobileExtraLarge: mobileExtraLarge,
+      if (tabletSmall != null) BreakPoint.tabletSmall: tabletSmall,
+      if (tabletNormal != null) BreakPoint.tabletNormal: tabletNormal,
+      if (tabletLarge != null) BreakPoint.tabletLarge: tabletLarge,
       if (tabletExtraLarge != null)
-        Node(BreakPoint.tabletExtraLarge, tabletExtraLarge),
-      if (desktopSmall != null) Node(BreakPoint.desktopSmall, desktopSmall),
-      if (desktopNormal != null) Node(BreakPoint.desktopNormal, desktopNormal),
-      if (desktopLarge != null) Node(BreakPoint.desktopLarge, desktopLarge),
+        BreakPoint.tabletExtraLarge: tabletExtraLarge,
+      if (desktopSmall != null) BreakPoint.desktopSmall: desktopSmall,
+      if (desktopNormal != null) BreakPoint.desktopNormal: desktopNormal,
+      if (desktopLarge != null) BreakPoint.desktopLarge: desktopLarge,
       if (desktopExtraLarge != null)
-        Node(BreakPoint.desktopExtraLarge, desktopExtraLarge),
-    ];
+        BreakPoint.desktopExtraLarge: desktopExtraLarge,
+    };
 
-    final landscapeNodesList = [
+    final landscapeMap = {
       if (mobileSmallLandscape != null)
-        Node(BreakPoint.mobileSmall, mobileSmallLandscape),
+        BreakPoint.mobileSmall: mobileSmallLandscape,
       if (mobileNormalLandscape != null)
-        Node(BreakPoint.mobileNormal, mobileNormalLandscape),
+        BreakPoint.mobileNormal: mobileNormalLandscape,
       if (mobileLargeLandscape != null)
-        Node(BreakPoint.mobileLarge, mobileLargeLandscape),
+        BreakPoint.mobileLarge: mobileLargeLandscape,
       if (mobileExtraLargeLandscape != null)
-        Node(BreakPoint.mobileExtraLarge, mobileExtraLargeLandscape),
+        BreakPoint.mobileExtraLarge: mobileExtraLargeLandscape,
       if (tabletSmallLandscape != null)
-        Node(BreakPoint.tabletSmall, tabletSmallLandscape),
+        BreakPoint.tabletSmall: tabletSmallLandscape,
       if (tabletNormalLandscape != null)
-        Node(BreakPoint.tabletNormal, tabletNormalLandscape),
+        BreakPoint.tabletNormal: tabletNormalLandscape,
       if (tabletLargeLandscape != null)
-        Node(BreakPoint.tabletLarge, tabletLargeLandscape),
+        BreakPoint.tabletLarge: tabletLargeLandscape,
       if (tabletExtraLargeLandscape != null)
-        Node(BreakPoint.tabletExtraLarge, tabletExtraLargeLandscape),
+        BreakPoint.tabletExtraLarge: tabletExtraLargeLandscape,
       if (desktopSmallLandscape != null)
-        Node(BreakPoint.desktopSmall, desktopSmallLandscape),
+        BreakPoint.desktopSmall: desktopSmallLandscape,
       if (desktopNormalLandscape != null)
-        Node(BreakPoint.desktopNormal, desktopNormalLandscape),
+        BreakPoint.desktopNormal: desktopNormalLandscape,
       if (desktopLargeLandscape != null)
-        Node(BreakPoint.desktopLarge, desktopLargeLandscape),
+        BreakPoint.desktopLarge: desktopLargeLandscape,
       if (desktopExtraLargeLandscape != null)
-        Node(BreakPoint.desktopExtraLarge, desktopExtraLargeLandscape),
-    ];
+        BreakPoint.desktopExtraLarge: desktopExtraLargeLandscape,
+    };
 
-    final closestNode = _findClosestNode(
-      _current,
+    final closestMapEntry = _findClosestMapEntry(
+      _currentLength,
       isPortrait,
-      portraitNodesList,
-      landscapeNodesList,
+      portraitMap,
+      landscapeMap,
     );
 
-    if (closestNode != null)
-      return closestNode.value!;
-    else
+    if (closestMapEntry != null) {
+      _oldLength = _currentLength;
+      _oldOrientation = _currentOrientation;
+      _cachedBreakPoint = closestMapEntry.key;
+      return closestMapEntry.value!;
+    } else
       throw Exception(
-          'Screen size not specified or there is no options passed from the parameters [current: `$_current`, orientation: `$_orientation`]');
+          'Screen size not specified or there is no options passed from the parameters [currentLength: `$_currentLength`, orientation: `$_currentOrientation`]');
   }
 
   /// Takes  `T Function(double width, double height)` as a parameter
@@ -152,161 +166,161 @@ class SizeHelper {
     HelpBuilderCallback<T>? desktopExtraLarge,
     HelpBuilderCallback<T>? desktopExtraLargeLandscape,
   }) {
-    final isPortrait = _orientation == Orientation.portrait;
+    final isPortrait = _currentOrientation == Orientation.portrait;
 
-    if (_printScreenInfo) _printCurrentScreenInfo(_current, _size, isPortrait);
+    if (_printScreenInfo)
+      _printCurrentScreenInfo(_currentLength, _size, isPortrait);
 
-    final portraitNodesList = [
-      if (mobileSmall != null) Node(BreakPoint.mobileSmall, mobileSmall),
-      if (mobileNormal != null) Node(BreakPoint.mobileNormal, mobileNormal),
-      if (mobileLarge != null) Node(BreakPoint.mobileLarge, mobileLarge),
+    final portraitMap = {
+      if (mobileSmall != null) BreakPoint.mobileSmall: mobileSmall,
+      if (mobileNormal != null) BreakPoint.mobileNormal: mobileNormal,
+      if (mobileLarge != null) BreakPoint.mobileLarge: mobileLarge,
       if (mobileExtraLarge != null)
-        Node(BreakPoint.mobileExtraLarge, mobileExtraLarge),
-      if (tabletSmall != null) Node(BreakPoint.tabletSmall, tabletSmall),
-      if (tabletNormal != null) Node(BreakPoint.tabletNormal, tabletNormal),
-      if (tabletLarge != null) Node(BreakPoint.tabletLarge, tabletLarge),
+        BreakPoint.mobileExtraLarge: mobileExtraLarge,
+      if (tabletSmall != null) BreakPoint.tabletSmall: tabletSmall,
+      if (tabletNormal != null) BreakPoint.tabletNormal: tabletNormal,
+      if (tabletLarge != null) BreakPoint.tabletLarge: tabletLarge,
       if (tabletExtraLarge != null)
-        Node(BreakPoint.tabletExtraLarge, tabletExtraLarge),
-      if (desktopSmall != null) Node(BreakPoint.desktopSmall, desktopSmall),
-      if (desktopNormal != null) Node(BreakPoint.desktopNormal, desktopNormal),
-      if (desktopLarge != null) Node(BreakPoint.desktopLarge, desktopLarge),
+        BreakPoint.tabletExtraLarge: tabletExtraLarge,
+      if (desktopSmall != null) BreakPoint.desktopSmall: desktopSmall,
+      if (desktopNormal != null) BreakPoint.desktopNormal: desktopNormal,
+      if (desktopLarge != null) BreakPoint.desktopLarge: desktopLarge,
       if (desktopExtraLarge != null)
-        Node(BreakPoint.desktopExtraLarge, desktopExtraLarge),
-    ];
+        BreakPoint.desktopExtraLarge: desktopExtraLarge,
+    };
 
-    final landscapeNodesList = [
+    final landscapeMap = {
       if (mobileSmallLandscape != null)
-        Node(BreakPoint.mobileSmall, mobileSmallLandscape),
+        BreakPoint.mobileSmall: mobileSmallLandscape,
       if (mobileNormalLandscape != null)
-        Node(BreakPoint.mobileNormal, mobileNormalLandscape),
+        BreakPoint.mobileNormal: mobileNormalLandscape,
       if (mobileLargeLandscape != null)
-        Node(BreakPoint.mobileLarge, mobileLargeLandscape),
+        BreakPoint.mobileLarge: mobileLargeLandscape,
       if (mobileExtraLargeLandscape != null)
-        Node(BreakPoint.mobileExtraLarge, mobileExtraLargeLandscape),
+        BreakPoint.mobileExtraLarge: mobileExtraLargeLandscape,
       if (tabletSmallLandscape != null)
-        Node(BreakPoint.tabletSmall, tabletSmallLandscape),
+        BreakPoint.tabletSmall: tabletSmallLandscape,
       if (tabletNormalLandscape != null)
-        Node(BreakPoint.tabletNormal, tabletNormalLandscape),
+        BreakPoint.tabletNormal: tabletNormalLandscape,
       if (tabletLargeLandscape != null)
-        Node(BreakPoint.tabletLarge, tabletLargeLandscape),
+        BreakPoint.tabletLarge: tabletLargeLandscape,
       if (tabletExtraLargeLandscape != null)
-        Node(BreakPoint.tabletExtraLarge, tabletExtraLargeLandscape),
+        BreakPoint.tabletExtraLarge: tabletExtraLargeLandscape,
       if (desktopSmallLandscape != null)
-        Node(BreakPoint.desktopSmall, desktopSmallLandscape),
+        BreakPoint.desktopSmall: desktopSmallLandscape,
       if (desktopNormalLandscape != null)
-        Node(BreakPoint.desktopNormal, desktopNormalLandscape),
+        BreakPoint.desktopNormal: desktopNormalLandscape,
       if (desktopLargeLandscape != null)
-        Node(BreakPoint.desktopLarge, desktopLargeLandscape),
+        BreakPoint.desktopLarge: desktopLargeLandscape,
       if (desktopExtraLargeLandscape != null)
-        Node(BreakPoint.desktopExtraLarge, desktopExtraLargeLandscape),
-    ];
+        BreakPoint.desktopExtraLarge: desktopExtraLargeLandscape,
+    };
 
-    final closestNode = _findClosestNode(
-      _current,
+    final closestMapEntry = _findClosestMapEntry(
+      _currentLength,
       isPortrait,
-      portraitNodesList,
-      landscapeNodesList,
+      portraitMap,
+      landscapeMap,
     );
 
-    if (closestNode != null)
-      return closestNode.value(_size.width, _size.height, _orientation);
-    else
+    if (closestMapEntry != null) {
+      _oldLength = _currentLength;
+      _oldOrientation = _currentOrientation;
+      _cachedBreakPoint = closestMapEntry.key;
+      return closestMapEntry.value(
+          _size.width, _size.height, _currentOrientation);
+    } else
       throw Exception(
-          'Screen size not specified or there is no options passed from the parameters [current: `$_current`, orientation: `$_orientation`]');
+          'Screen size not specified or there is no options passed from the parameters [currentLength: `$_currentLength`, orientation: `$_currentOrientation`]');
   }
 
-  Node<T>? _findClosestNode<T>(double currentSize, bool isPortrait,
-      List<Node<T>> portraitNodesList, List<Node<T>> landscapeNodesList) {
-    var closestNode = isPortrait
-        ? _findClosestNodeFromList(portraitNodesList, currentSize)
-        : _findClosestNodeFromList(landscapeNodesList, currentSize);
+  MapEntry<double, T>? _findClosestMapEntry<T>(
+    double currentLengthSize,
+    bool isPortrait,
+    Map<double, T> portraitMap,
+    Map<double, T> landscapeMap,
+  ) {
+    // FIXME: the problem here is that the _cachedBreakPoint may not be the closest one,
+    // it's just the closest for the last search,
+    // so we need to find a better way to cache it.
+    if (_oldLength == _currentLength &&
+        _oldOrientation == _currentOrientation) {
+      final value = isPortrait
+          ? portraitMap[_cachedBreakPoint]
+          : landscapeMap[_cachedBreakPoint];
+      if (value != null) return MapEntry(_cachedBreakPoint!, value);
+    }
 
-    if (closestNode == null)
-      closestNode = !isPortrait
-          ? _findClosestNodeFromList(portraitNodesList, currentSize)
-          : _findClosestNodeFromList(landscapeNodesList, currentSize);
-    return closestNode;
+    var closestMapEntry = isPortrait
+        ? _findClosestMapEntryFromMap(portraitMap, currentLengthSize)
+        : _findClosestMapEntryFromMap(landscapeMap, currentLengthSize);
+
+    if (closestMapEntry == null)
+      closestMapEntry = !isPortrait
+          ? _findClosestMapEntryFromMap(portraitMap, currentLengthSize)
+          : _findClosestMapEntryFromMap(landscapeMap, currentLengthSize);
+
+    return closestMapEntry;
   }
 
-  Node<T>? _findClosestNodeFromList<T>(
-      List<Node<T>> nodesList, double current) {
-    if (nodesList.isEmpty) return null;
-    var closestNode = nodesList.first;
-    var minDifference = (closestNode.breakPoint - current).abs();
-    for (int i = 1; i < nodesList.length; i++) {
-      final node = nodesList[i];
-      final difference = (node.breakPoint - current).abs();
+  MapEntry<double, T>? _findClosestMapEntryFromMap<T>(
+    Map<double, T> map,
+    double currentLength,
+  ) {
+    if (map.isEmpty) return null;
+    var closestMapEntry = map.entries.first;
+    var minDifference = (closestMapEntry.key - currentLength).abs();
+    map.forEach((key, value) {
+      final difference = (key - currentLength).abs();
       if (difference < minDifference) {
         minDifference = difference;
-        closestNode = node;
+        closestMapEntry = MapEntry(key, value);
       }
-    }
-    return closestNode;
+    });
+    return closestMapEntry;
   }
 
-  void _printCurrentScreenInfo(double current, Size size, bool isPortrait) {
+  void _printCurrentScreenInfo(
+      double currentLength, Size size, bool isPortrait) {
     final orientationText = isPortrait ? 'Portrait' : 'Landscape';
     final f = _differenceBetweenCurrentAndBreakPoint;
-    final screenInfoNodes = [
-      Node(
-        BreakPoint.mobileSmall,
-        'SizeHelper: ${f(current, BreakPoint.mobileSmall)} mobileSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.mobileNormal,
-        'SizeHelper: ${f(current, BreakPoint.mobileNormal)} mobileNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.mobileLarge,
-        'SizeHelper: ${f(current, BreakPoint.mobileLarge)} mobileLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.mobileExtraLarge,
-        'SizeHelper: ${f(current, BreakPoint.mobileExtraLarge)} mobileExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.tabletSmall,
-        'SizeHelper: ${f(current, BreakPoint.tabletSmall)} tabletSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.tabletNormal,
-        'SizeHelper: ${f(current, BreakPoint.tabletNormal)} tabletNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.tabletLarge,
-        'SizeHelper: ${f(current, BreakPoint.tabletLarge)} tabletLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.tabletExtraLarge,
-        'SizeHelper: ${f(current, BreakPoint.tabletExtraLarge)} tabletExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.desktopSmall,
-        'SizeHelper: ${f(current, BreakPoint.desktopSmall)} desktopSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.desktopNormal,
-        'SizeHelper: ${f(current, BreakPoint.desktopNormal)} desktopNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.desktopLarge,
-        'SizeHelper: ${f(current, BreakPoint.desktopLarge)} desktopLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-      Node(
-        BreakPoint.desktopExtraLarge,
-        'SizeHelper: ${f(current, BreakPoint.desktopExtraLarge)} desktopExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
-      ),
-    ];
+    final screenInfoMapEntrys = {
+      BreakPoint.mobileSmall:
+          'SizeHelper: ${f(currentLength, BreakPoint.mobileSmall)} mobileSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.mobileNormal:
+          'SizeHelper: ${f(currentLength, BreakPoint.mobileNormal)} mobileNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.mobileLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.mobileLarge)} mobileLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.mobileExtraLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.mobileExtraLarge)} mobileExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.tabletSmall:
+          'SizeHelper: ${f(currentLength, BreakPoint.tabletSmall)} tabletSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.tabletNormal:
+          'SizeHelper: ${f(currentLength, BreakPoint.tabletNormal)} tabletNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.tabletLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.tabletLarge)} tabletLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.tabletExtraLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.tabletExtraLarge)} tabletExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.desktopSmall:
+          'SizeHelper: ${f(currentLength, BreakPoint.desktopSmall)} desktopSmall | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.desktopNormal:
+          'SizeHelper: ${f(currentLength, BreakPoint.desktopNormal)} desktopNormal | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.desktopLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.desktopLarge)} desktopLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+      BreakPoint.desktopExtraLarge:
+          'SizeHelper: ${f(currentLength, BreakPoint.desktopExtraLarge)} desktopExtraLarge | Width: ${size.width} | Height: ${size.height} | Orientation: $orientationText',
+    };
 
-    final closestNode = _findClosestNodeFromList(screenInfoNodes, current);
-    log(closestNode!.value);
+    final closestMapEntry =
+        _findClosestMapEntryFromMap(screenInfoMapEntrys, currentLength);
+    log(closestMapEntry!.value);
   }
 
   String _differenceBetweenCurrentAndBreakPoint(
-      double current, double breakPoint) {
-    if (current > breakPoint)
+      double currentLength, double breakPoint) {
+    if (currentLength > breakPoint)
       return '+';
-    else if (current == breakPoint)
+    else if (currentLength == breakPoint)
       return '=';
     else
       return '-';

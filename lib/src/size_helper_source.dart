@@ -1,17 +1,13 @@
 import 'dart:developer' show log;
 
+import 'package:size_helper/src/screen_info.dart';
+
 import 'breakpoints.dart';
 import 'package:flutter/widgets.dart'
     show Size, Orientation, BuildContext, MediaQuery;
 
-import 'node.dart';
-
 /// Takes `T Function(double width, double height, Orientation orientation)` as a parameter
-typedef HelpBuilderCallback<T> = T Function(
-  double width,
-  double height,
-  Orientation orientation,
-);
+typedef HelpBuilderCallback<T> = T Function(ScreenInfo screenInfo);
 
 class SizeHelper {
   SizeHelper._internal(
@@ -252,9 +248,11 @@ class SizeHelper {
 
     if (closest != null) {
       return closest(
-        _size.width,
-        _size.height,
-        _currentOrientation,
+        ScreenInfo(
+          width: _size.width,
+          height: _size.height,
+          orientation: _currentOrientation,
+        ),
       );
     } else
       throw Exception(

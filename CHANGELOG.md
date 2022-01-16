@@ -37,3 +37,7 @@ SizeBox(
     ),
 )
 ```
+
+## 1.1.1+4
+
+- Fix `README.md` screenshot gif.

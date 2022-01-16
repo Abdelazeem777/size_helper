@@ -166,7 +166,7 @@ Scaffold(
 
 ## Screenshot
 
-<img src="/screenshot/size_helper.gif" width="500"/>
+<img src="https://raw.githubusercontent.com/Abdelazeem777/size_helper/main/screenshot/size_helper.gif" width="500"/>
 
 ## More information
 

@@ -35,7 +35,7 @@ class SizeHelper {
         width > height ? Orientation.landscape : Orientation.portrait;
 
     final currentLength =
-        currentOrientation == Orientation.portrait ? height : width;
+        currentOrientation == Orientation.portrait ? width : height;
 
     return SizeHelper._internal(
       currentLength,

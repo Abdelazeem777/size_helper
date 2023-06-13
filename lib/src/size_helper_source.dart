@@ -1,5 +1,6 @@
 import 'dart:developer' show log;
 
+import 'package:flutter/foundation.dart';
 import 'package:size_helper/src/screen_info.dart';
 
 import 'breakpoints.dart';
@@ -34,8 +35,11 @@ class SizeHelper {
     final currentOrientation =
         width > height ? Orientation.landscape : Orientation.portrait;
 
-    final currentLength =
-        currentOrientation == Orientation.portrait ? width : height;
+    final currentLength = kIsWeb
+        ? width
+        : currentOrientation == Orientation.portrait
+            ? width
+            : height;
 
     return SizeHelper._internal(
       currentLength,

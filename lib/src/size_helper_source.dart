@@ -1,5 +1,6 @@
 import 'dart:developer' show log;
 
+import 'package:flutter/foundation.dart';
 import 'package:size_helper/src/screen_info.dart';
 
 import 'breakpoints.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/widgets.dart'
 /// Takes `T Function(double width, double height, Orientation orientation)` as a parameter
 typedef HelpBuilderCallback<T> = T Function(ScreenInfo screenInfo);
 
+//TODO: Try the singleton approach and benchmark it!
 class SizeHelper {
   SizeHelper._internal(
     this._currentLength,
@@ -24,6 +26,7 @@ class SizeHelper {
   static double? _oldLength;
   static Orientation? _oldOrientation;
   static List<BreakPoint>? _cachedBreakPointsList;
+  static bool? willDependOnOrientation;
 
   static SizeHelper of(BuildContext context, {bool printScreenInfo = false}) {
     final size = MediaQuery.of(context).size;
@@ -31,11 +34,19 @@ class SizeHelper {
     final width = size.width;
     final height = size.height;
 
-    final currentOrientation =
-        width > height ? Orientation.landscape : Orientation.portrait;
+    willDependOnOrientation ??= _determineIfWillDependOnOrientation();
 
-    final currentLength =
-        currentOrientation == Orientation.portrait ? height : width;
+    final currentOrientation = willDependOnOrientation == true
+        ? width > height
+            ? Orientation.landscape
+            : Orientation.portrait
+        : Orientation.portrait;
+
+    final currentLength = willDependOnOrientation == true
+        ? currentOrientation == Orientation.portrait
+            ? width
+            : height
+        : width;
 
     return SizeHelper._internal(
       currentLength,
@@ -318,5 +329,16 @@ class SizeHelper {
       return '=';
     else
       return '-';
+  }
+
+  static bool _determineIfWillDependOnOrientation() {
+    if (kIsWeb) return false;
+    if (defaultTargetPlatform == TargetPlatform.iOS) return true;
+    if (defaultTargetPlatform == TargetPlatform.android) return true;
+    if (defaultTargetPlatform == TargetPlatform.fuchsia) return false;
+    if (defaultTargetPlatform == TargetPlatform.linux) return false;
+    if (defaultTargetPlatform == TargetPlatform.windows) return false;
+    if (defaultTargetPlatform == TargetPlatform.macOS) return false;
+    return true;
   }
 }

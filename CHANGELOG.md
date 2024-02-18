@@ -1,17 +1,11 @@
-## 0.0.1
+## 2.0.0
 
-- initial release.
+- Make the breakpoints depend on Width not Height.
+- Update breakpoints values.
 
-## 0.0.1+1
+## 1.1.1+4
 
-- Update `pubspec.yaml` description.
-- Add valid `homepage` URL.
-- Add `orientation` option with `helpBuilder` method.
-
-## 1.0.0+2
-
-- Use `log` instead of `print`.
-- Move package to stable version `1.0.0+2`.
+- Fix `README.md` screenshot gif.
 
 ## 1.1.0+3
 
@@ -38,6 +32,17 @@ SizeBox(
 )
 ```
 
-## 1.1.1+4
+## 1.0.0+2
 
-- Fix `README.md` screenshot gif.
+- Use `log` instead of `print`.
+- Move package to stable version `1.0.0+2`.
+
+## 0.0.1+1
+
+- Update `pubspec.yaml` description.
+- Add valid `homepage` URL.
+- Add `orientation` option with `helpBuilder` method.
+
+## 0.0.1
+
+- Initial release.

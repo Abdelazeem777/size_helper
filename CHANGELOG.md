@@ -1,3 +1,7 @@
+## 2.1.0
+
+- Start using `.sizeOf(context)`instead of `.of(context).size`.
+
 ## 2.0.0
 
 - Make the breakpoints depend on Width not Height.

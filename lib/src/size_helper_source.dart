@@ -29,7 +29,7 @@ class SizeHelper {
   static bool? willDependOnOrientation;
 
   static SizeHelper of(BuildContext context, {bool printScreenInfo = false}) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
 
     final width = size.width;
     final height = size.height;

@@ -297,6 +297,7 @@ class SizeHelper {
       final closest = map[breakPoint];
       if (closest != null) return closest;
     }
+    return null;
   }
 
   List<BreakPoint> _getSortedBreakPointsByClosestTo(double currentLength) {

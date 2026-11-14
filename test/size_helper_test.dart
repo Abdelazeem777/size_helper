@@ -23,8 +23,8 @@ const _midpoints = <_Boundary>[
   _Boundary(337.5, 'mobileNormal', 'mobileLarge'),
   _Boundary(362.5, 'mobileLarge', 'mobileExtraLarge'),
   _Boundary(387.5, 'mobileExtraLarge', 'tabletSmall'),
-  // tabletSmall and tabletNormal are both 400.0, so tabletSmall always wins.
-  _Boundary(425.0, 'tabletSmall', 'tabletLarge'),
+  _Boundary(412.5, 'tabletSmall', 'tabletNormal'),
+  _Boundary(437.5, 'tabletNormal', 'tabletLarge'),
   _Boundary(525.0, 'tabletLarge', 'tabletExtraLarge'),
   _Boundary(775.0, 'tabletExtraLarge', 'desktopSmall'),
   _Boundary(1050.0, 'desktopSmall', 'desktopNormal'),
@@ -33,9 +33,7 @@ const _midpoints = <_Boundary>[
 ];
 
 /// The option expected when the length equals [breakPoint]'s value.
-String _expectedAt(BreakPoint breakPoint) =>
-    // tabletNormal shares 400.0 with tabletSmall, which comes first.
-    breakPoint == BreakPoint.tabletNormal ? 'tabletSmall' : breakPoint.name;
+String _expectedAt(BreakPoint breakPoint) => breakPoint.name;
 
 void main() {
   setUp(resetSizeHelperPlatformCache);
@@ -98,16 +96,9 @@ void main() {
       expect(await at(5000), 'desktopExtraLarge');
     });
 
-    // Known bug: tabletSmall and tabletNormal are both 400.0
-    // (lib/src/breakpoints.dart:11-12), so `tabletNormal` is unreachable
-    // whenever `tabletSmall` is passed too. testWidgets only takes a bool
-    // `skip`; the string reason lives on the matching test in
-    // breakpoints_test.dart.
     testWidgets(
       'tabletNormal is selectable when tabletSmall is also passed',
       (tester) async {
-        // Both breakpoints are 400.0, so the closest-breakpoint search can
-        // never prefer tabletNormal over tabletSmall.
         final result = await resolveAt(
           tester,
           portrait(BreakPoint.tabletNormal.value),
@@ -116,14 +107,13 @@ void main() {
         );
         expect(result, 'tabletNormal');
       },
-      skip: true, // Known bug, see the comment above.
     );
 
     testWidgets('tabletNormal is selected when tabletSmall is not passed',
         (tester) async {
       final result = await resolveAt(
         tester,
-        portrait(400),
+        portrait(425),
         (context) => helpWithAll(
           SizeHelper.of(context),
           omit: {...landscapeNames, 'tabletSmall'},
@@ -551,7 +541,7 @@ void main() {
       expect(
         await resolveAt(
           tester,
-          portrait(400),
+          portrait(425),
           (context) => helpBuilderWithAll(SizeHelper.of(context), omit: omit),
         ),
         'tabletNormal',
@@ -559,7 +549,7 @@ void main() {
       expect(
         await resolveAt(
           tester,
-          landscape(400),
+          landscape(425),
           (context) => helpBuilderWithAll(SizeHelper.of(context), omit: omit),
         ),
         'tabletNormalLandscape',

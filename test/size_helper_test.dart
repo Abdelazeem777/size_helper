@@ -361,6 +361,24 @@ void main() {
       variant: mobilePlatforms,
     );
 
+    testWidgets(
+      'an option for the current orientation beats a closer one for the other',
+      (tester) async {
+        // Landscape 1920x1080: length 1080 is far closer to desktopNormal
+        // (1150) than to mobileSmall (275), but landscape options come first.
+        final result = await resolveAt(
+          tester,
+          const Size(1920, 1080),
+          (context) => SizeHelper.of(context).help(
+            mobileSmallLandscape: 'mobileSmallLandscape',
+            desktopNormal: 'desktopNormal',
+          ),
+        );
+        expect(result, 'mobileSmallLandscape');
+      },
+      variant: mobilePlatforms,
+    );
+
     testWidgets('explicit null options are treated as not passed',
         (tester) async {
       final result = await resolveAt(

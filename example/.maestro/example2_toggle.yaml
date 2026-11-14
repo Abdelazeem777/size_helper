@@ -1,0 +1,15 @@
+# The floating button switches between the two examples.
+appId: com.example.example
+---
+- launchApp
+- evalScript: "${output.breakpoint = typeof EXPECTED_BREAKPOINT === 'undefined' ? 'tabletSmall' : EXPECTED_BREAKPOINT}"
+- setOrientation: PORTRAIT
+- tapOn: "Show example 2"
+- assertVisible: "Card 1"
+- assertNotVisible: ${output.breakpoint}
+# Phones get a scrolling column, large screens a wrap: Card 15 is reachable on both.
+- scrollUntilVisible:
+    element: "Card 15"
+    direction: DOWN
+- tapOn: "Show example 1"
+- assertVisible: ${output.breakpoint}

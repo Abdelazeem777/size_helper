@@ -1,0 +1,12 @@
+# The breakpoint label depends on the screen width.
+# EXPECTED_BREAKPOINT defaults to tabletSmall (390pt-wide phones such as the
+# iPhone 16e); on an iPad Air 13" (1032pt wide) pass
+# -e EXPECTED_BREAKPOINT=desktopSmall.
+appId: com.example.example
+---
+- launchApp:
+    clearState: true
+- evalScript: "${output.breakpoint = typeof EXPECTED_BREAKPOINT === 'undefined' ? 'tabletSmall' : EXPECTED_BREAKPOINT}"
+- setOrientation: PORTRAIT
+- assertVisible: ${output.breakpoint}
+- assertVisible: ".* portrait"

@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:size_helper/size_helper.dart';
-import 'package:size_helper/src/screen_info.dart';
 
 /// The 12 portrait option names, in the same order as the parameters.
 const portraitNames = <String>[

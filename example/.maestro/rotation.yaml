@@ -1,0 +1,14 @@
+# On phones and tablets the breakpoint is picked from the shorter side,
+# so rotating flips the reported orientation but keeps the breakpoint.
+appId: com.example.example
+---
+- launchApp
+- evalScript: "${output.breakpoint = typeof EXPECTED_BREAKPOINT === 'undefined' ? 'tabletSmall' : EXPECTED_BREAKPOINT}"
+- setOrientation: PORTRAIT
+- assertVisible: ".* portrait"
+- setOrientation: LANDSCAPE_LEFT
+- assertVisible: ".* landscape"
+- assertVisible: ${output.breakpoint}
+- setOrientation: PORTRAIT
+- assertVisible: ".* portrait"
+- assertVisible: ${output.breakpoint}

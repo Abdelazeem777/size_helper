@@ -14,19 +14,44 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool _showExample2 = false;
+
+  @override
   Widget build(BuildContext context) {
-    return //_buildExample2(context);
-        _buildExample1(context);
+    return _showExample2 ? _buildExample2(context) : _buildExample1(context);
+  }
+
+  Widget _buildToggleButton() {
+    return FloatingActionButton.extended(
+      onPressed: () => setState(() => _showExample2 = !_showExample2),
+      label: Text(_showExample2 ? 'Show example 1' : 'Show example 2'),
+    );
   }
 
   Widget _buildExample1(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // A single option is used for every screen size; `screenInfo` gives
+        // the current width, height and orientation.
+        title: Text(
+          context.sizeHelperBuilder(
+            mobileSmall: (screenInfo) => '${screenInfo.width.round()} x '
+                '${screenInfo.height.round()} '
+                '${screenInfo.orientation == Orientation.portrait ? 'portrait' : 'landscape'}',
+          ),
+        ),
+      ),
+      floatingActionButton: _buildToggleButton(),
       body: SizeHelper.of(context, printScreenInfo: true).helpBuilder(
         mobileNormal: (_) => Container(
           alignment: Alignment.center,
@@ -81,6 +106,7 @@ class Home extends StatelessWidget {
     final dataList = List.generate(15, (index) => 'Card ${index + 1}');
     final cardsList = dataList.map((e) => CardWidget(text: e)).toList();
     return Scaffold(
+      floatingActionButton: _buildToggleButton(),
       body: context.sizeHelperBuilder(
         mobileExtraLarge: (_) => SingleChildScrollView(
             child: Column(

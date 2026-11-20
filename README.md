@@ -61,7 +61,7 @@ Example 1
 Container(
   margin: SizeHelper.of(context).help(
     mobileLarge: const EdgeInsets.all(8.0),
-    tableNormal: const EdgeInsets.all(16.0),
+    tabletNormal: const EdgeInsets.all(16.0),
     tabletExtraLarge: const EdgeInsets.all(24.0),
     desktopLarge: const EdgeInsets.all(32.0),
   )
@@ -74,7 +74,7 @@ Example 2
 Container(
   width: SizeHelper.of(context).help(
     mobileLarge: 200.0,
-    tableNormal: 240.0,
+    tabletNormal: 240.0,
     tabletExtraLarge: 325.0,
     desktopLarge: 380.0,
   )
@@ -192,7 +192,7 @@ Text(
 if the current screen-size is `tableLarge` which is not specified inside `SizeHelper` then it will choose the closest size to it.
 in our case it is `18.0` for `tabletNormal`.
 
-- Also, it provide another 12 breakpoints for the `landScape` orientation, which will be very useful for **Web development**
+- Also, it provides another 12 breakpoints for the `landScape` orientation. Orientation is only taken into account on mobile (Android and iOS); on web and desktop the orientation is always treated as portrait, so the `*Landscape` options are only used there as a fallback when no portrait option is passed.
 
 - You can print your screen-size information by passing `printScreenInfo: true` inside `of` method like this:
 
@@ -204,7 +204,7 @@ SizeHelper.of(context, printScreenInfo: true).help(
 and it will print on your console logs:
 
 ```
-SizeHelper: + desktopNormal | Width: 150.0 | Height: 1900.0 | Orientation: Portrait
+SizeHelper: - tabletSmall | Width: 390.0 | Height: 844.0 | Orientation: Portrait
 
 ```
 

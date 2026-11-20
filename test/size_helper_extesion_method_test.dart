@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:size_helper/size_helper.dart';
 import 'package:size_helper/src/breakpoints.dart';
-import 'package:size_helper/src/screen_info.dart';
 
 import 'test_helpers.dart';
 
@@ -87,7 +86,7 @@ String _sizeHelperBuilderWithAll(
 }
 
 /// Sizes at which each of the 24 options is the one selected, when all 24 are
-/// passed (except `tabletSmall*`, which would shadow `tabletNormal*`).
+/// passed.
 Map<String, Size> _sizeForEachOption() => {
       for (final b in BreakPoint.values) ...{
         b.name: portrait(b.value),
@@ -102,13 +101,10 @@ void main() {
   group('context.sizeHelper', () {
     for (final entry in _sizeForEachOption().entries) {
       testWidgets('forwards ${entry.key}', (tester) async {
-        final omit = entry.key.startsWith('tabletNormal')
-            ? {'tabletSmall', 'tabletSmallLandscape'}
-            : const <String>{};
         final result = await resolveAt(
           tester,
           entry.value,
-          (context) => _sizeHelperWithAll(context, omit: omit),
+          (context) => _sizeHelperWithAll(context),
         );
         expect(result, entry.key);
       });
@@ -161,13 +157,10 @@ void main() {
   group('context.sizeHelperBuilder', () {
     for (final entry in _sizeForEachOption().entries) {
       testWidgets('forwards ${entry.key}', (tester) async {
-        final omit = entry.key.startsWith('tabletNormal')
-            ? {'tabletSmall', 'tabletSmallLandscape'}
-            : const <String>{};
         final result = await resolveAt(
           tester,
           entry.value,
-          (context) => _sizeHelperBuilderWithAll(context, omit: omit),
+          (context) => _sizeHelperBuilderWithAll(context),
         );
         expect(result, entry.key);
       });

@@ -9,7 +9,7 @@ class BreakPoint {
   static const mobileLarge = BreakPoint._('mobileLarge', 350.0);
   static const mobileExtraLarge = BreakPoint._('mobileExtraLarge', 375.0);
   static const tabletSmall = BreakPoint._('tabletSmall', 400.0);
-  static const tabletNormal = BreakPoint._('tabletNormal', 400.0);
+  static const tabletNormal = BreakPoint._('tabletNormal', 425.0);
   static const tabletLarge = BreakPoint._('tabletLarge', 450.0);
   static const tabletExtraLarge = BreakPoint._('tabletExtraLarge', 600.0);
   static const desktopSmall = BreakPoint._('desktopSmall', 950.0);

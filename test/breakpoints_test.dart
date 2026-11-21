@@ -12,7 +12,7 @@ void main() {
           'mobileLarge': 350.0,
           'mobileExtraLarge': 375.0,
           'tabletSmall': 400.0,
-          'tabletNormal': 400.0,
+          'tabletNormal': 425.0,
           'tabletLarge': 450.0,
           'tabletExtraLarge': 600.0,
           'desktopSmall': 950.0,
@@ -47,19 +47,13 @@ void main() {
       }
     });
 
-    test(
-      'values are strictly increasing',
-      () {
-        final values = BreakPoint.values.map((b) => b.value).toList();
-        for (var i = 1; i < values.length; i++) {
-          expect(values[i], greaterThan(values[i - 1]),
-              reason: BreakPoint.values[i].name);
-        }
-      },
-      skip: 'Known bug: tabletSmall and tabletNormal are both 400.0 '
-          '(lib/src/breakpoints.dart:11-12), so tabletNormal is unreachable '
-          'whenever tabletSmall is also passed.',
-    );
+    test('values are strictly increasing', () {
+      final values = BreakPoint.values.map((b) => b.value).toList();
+      for (var i = 1; i < values.length; i++) {
+        expect(values[i], greaterThan(values[i - 1]),
+            reason: BreakPoint.values[i].name);
+      }
+    });
 
     test('values returns a fresh list each time (SizeHelper sorts it)', () {
       final first = BreakPoint.values..clear();

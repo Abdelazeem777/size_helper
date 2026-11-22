@@ -189,7 +189,7 @@ Text(
 )
 ```
 
-if the current screen-size is `tableLarge` which is not specified inside `SizeHelper` then it will choose the closest size to it.
+if the current screen-size is `tabletLarge` which is not specified inside `SizeHelper` then it will choose the closest size to it.
 in our case it is `18.0` for `tabletNormal`.
 
 - Also, it provides another 12 breakpoints for the `landScape` orientation. Orientation is only taken into account on mobile (Android and iOS); on web and desktop the orientation is always treated as portrait, so the `*Landscape` options are only used there as a fallback when no portrait option is passed.

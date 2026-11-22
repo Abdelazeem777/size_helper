@@ -1,3 +1,12 @@
+## 2.2.0
+
+- Fix `tabletNormal`: it had the same width as `tabletSmall` (400), so it was never picked. It is now 425.
+- Export `ScreenInfo` from `package:size_helper/size_helper.dart`, so `helpBuilder` callbacks can name the type without importing `src/`.
+- Remove `mockito` from runtime dependencies (it was pulled into every app that used this package) and `build_runner: any` from dev dependencies.
+- Raise minimum versions to Dart 3.0 and Flutter 3.10. 2.1.0 already needed Flutter 3.10 for `MediaQuery.sizeOf`.
+- README fixes (`tabletNormal`/`tabletLarge` names, landscape behavior on web and desktop, sample log line). The demo GIF is no longer shipped in the package archive.
+- Add widget tests, Maestro flows and GitHub Actions CI.
+
 ## 2.1.0
 
 - Start using `.sizeOf(context)`instead of `.of(context).size`.

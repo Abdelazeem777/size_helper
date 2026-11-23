@@ -53,3 +53,26 @@ jobs:
       - name: Build example for web
         working-directory: example
         run: flutter build web
+
+  # The declared minimum (pubspec.yaml: flutter >=3.10.0). Only the package
+  # itself; the example follows current Flutter.
+  floor:
+    name: Analyze and test (Flutter 3.10.0)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.0"
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos lib test
+
+      - name: Run tests
+        run: flutter test

@@ -1,6 +1,12 @@
+## Unreleased
+
+- Correct the 2.2.0 notes: the `tabletNormal` change can change which option is picked (see 2.2.0).
+- Add `repository` and `issue_tracker` to pubspec.yaml.
+- CI also runs analyze and tests on Flutter 3.10.0, the minimum this package supports.
+
 ## 2.2.0
 
-- Fix `tabletNormal`: it had the same width as `tabletSmall` (400), so it was never picked. It is now 425.
+- **Behaviour change:** `tabletNormal` moved from 400 to 425. It had the same width as `tabletSmall`, so it was never picked when both were passed. If you pass `tabletNormal` without `tabletSmall`, some widths now pick a smaller option instead. For example, with `mobileExtraLarge` and `tabletNormal`, widths from about 388 to 400 dp (iPhone 12-15 are 390 and 393 dp) used to get `tabletNormal` and now get `mobileExtraLarge`; with `mobileLarge` and `tabletNormal`, widths from about 376 to 387 dp now get `mobileLarge`.
 - Export `ScreenInfo` from `package:size_helper/size_helper.dart`, so `helpBuilder` callbacks can name the type without importing `src/`.
 - Remove `mockito` from runtime dependencies (it was pulled into every app that used this package) and `build_runner: any` from dev dependencies.
 - Raise minimum versions to Dart 3.0 and Flutter 3.10. 2.1.0 already needed Flutter 3.10 for `MediaQuery.sizeOf`.
